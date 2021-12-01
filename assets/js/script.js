@@ -1,5 +1,3 @@
-const { clearConfigCache } = require("prettier");
-
 const quiz = [
   {
     question: "Inside which HTML element do we put the JavaScript?",
