@@ -1,33 +1,48 @@
+const { clearConfigCache } = require("prettier");
+
 const quiz = [
   {
-    question: "Question 1",
-    options: ["X", "Y", "Z"],
-    answer: "Z",
-    penaltyTime: 10,
+    question: "Inside which HTML element do we put the JavaScript?",
+    options: ["<javascript>", "<script>", "<js>"],
+    answer: "<script>",
+    penaltyTime: 5,
   },
   {
-    question: "Question 2",
-    options: ["A", "B", "C"],
-    answer: "C",
-    penaltyTime: 10,
+    question:
+      "What is the correct syntax for referring to an external script called 'xxx.js'?",
+    options: [
+      "<script href='xxx.js'>",
+      "<script name='xxx.js'>",
+      "<script src='xxx.js'>",
+    ],
+    answer: "<script src='xxx.js'>",
+    penaltyTime: 5,
   },
   {
-    question: "Question 3",
-    options: ["D", "E", "F"],
-    answer: "F",
-    penaltyTime: 10,
+    question: "How do you create a function in JavaScript?",
+    options: [
+      "function myFunction()",
+      "function:myFunction()",
+      "function = myFunction()",
+    ],
+    answer: "function myFunction()",
+    penaltyTime: 5,
   },
   {
-    question: "Question 4",
-    options: ["G", "H", "I"],
-    answer: "I",
-    penaltyTime: 10,
+    question: "How do you call a function named 'myFunction'?",
+    options: [
+      "call myFunction()",
+      "myFunction()",
+      "call function myFunction()",
+    ],
+    answer: "myFunction()",
+    penaltyTime: 5,
   },
   {
-    question: "Question 5",
-    options: ["J", "K", "L"],
-    answer: "L",
-    penaltyTime: 10,
+    question: "How to write an IF statement in JavaScript?",
+    options: ["if i = 5", "if(i ==5)", "if i == 5 then"],
+    answer: "if(i ==5)",
+    penaltyTime: 5,
   },
 ];
 
@@ -177,7 +192,7 @@ function main() {
   startQuiz.addEventListener("click", () => {
     document.getElementById("quiz").hidden = false;
     removeButtonOptions();
-    const quizTime = 15;
+    const quizTime = 75;
     const initialIndex = 0;
     const lastIndex = quiz.length;
 
