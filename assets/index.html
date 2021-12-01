@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <title>Quiz Form</title>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="form">
+        <span id="time">Time: 15 Seconds</span>
+        <div id="home">
+          <h2 id="title">Quiz Form</h2>
+          <p>
+            Welcome to this quiz.<br />
+            We are going to test your knowledge about what have you learned so
+            far in this bootcamp<br />
+            Are you ready?
+          </p>
+          <button id="startQuiz">Star Quiz</button>
+          <p>
+            Note: each wrong answer is going to have a penalty of 10 seconds
+            less in the timer~!
+          </p>
+        </div>
+        <div id="quiz">
+          <h2 id="titleQuestion"></h2>
+          <div id="questions"></div>
+          <div id="options"></div>
+          <span id="message"></span>
+        </div>
+        <div id="addQuizResults">
+          <h2>Times up!</h2>
+          <div id="result"></div>
+          <label for="player">Enter initials:</label>
+          <input type="text" id="player" placeholder="" />
+          <button id="submitResult">Submit</button>
+        </div>
+        <div id="playersResults">
+          <div id="players"></div>
+          <button id="clearHistorial">Clear Historial</button>
+          <button id="back">Go back</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./js/script.js"></script>
+  </body>
+</html>
