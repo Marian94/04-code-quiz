@@ -43,164 +43,187 @@ const quiz = [
     penaltyTime: 5,
   },
 ];
-
 let players = [];
+let quizTime = 70;
+let score = 0;
+let timeOut;
+let timerStart = false;
 
-let currentTime;
-let clock;
-
-function createTimerClock(duration) {
-  let seconds;
-  let time = duration;
-  const display = document.getElementById("time");
-
-  return setInterval(() => {
-    seconds = parseInt(time % 60, 10);
-    if (seconds > 0) {
-      currentTime = seconds < 10 ? `0${seconds}` : seconds;
-      seconds = `Time: ${currentTime} Seconds`;
-    } else {
-      currentTime = 0;
-      seconds = 0;
-    }
-
-    display.textContent = seconds;
-
-    if (--time < 0) {
-      removeTimerClock(clock);
-      addQuizResults();
-    }
-  }, 1000);
-}
-
-function removeTimerClock(timer) {
-  clearInterval(timer);
-}
-
-function removeButtonOptions() {
-  const buttonOptions = document.querySelectorAll(".btn-options");
-  buttonOptions.forEach((button) => button.remove());
-}
+const homeView = document.getElementById("home");
+const quizView = document.getElementById("quiz");
+const addQuizResultsView = document.getElementById("addQuizResults");
+const playersResultsView = document.getElementById("playersResults");
 
 function createTable(players) {
-  const table = document.createElement("table");
-  table.classList.add("table-results");
-  const tr = document.createElement("tr");
-  const thPlayerName = document.createElement("th");
-  const thPlayerScore = document.createElement("th");
-  thPlayerName.innerHTML = "Players Name";
-  thPlayerScore.innerHTML = "Score";
-  tr.appendChild(thPlayerName);
-  tr.appendChild(thPlayerScore);
-  table.appendChild(tr);
-
-  players.map((player) => {
+  const table = document.getElementById("table-results");
+  console.log("players", players);
+  if (!table) {
+    const table = document.createElement("table");
+    table.setAttribute("id", "table-results");
     const tr = document.createElement("tr");
-    const tdPlayerName = document.createElement("td");
-    const tdPlayerScore = document.createElement("td");
-    tdPlayerName.innerHTML = player.playersName;
-    tdPlayerScore.innerHTML = player.score;
-    tr.appendChild(tdPlayerName);
-    tr.appendChild(tdPlayerScore);
+    const thPlayerName = document.createElement("th");
+    const thPlayerScore = document.createElement("th");
+    thPlayerName.innerText = "Players Name";
+    thPlayerScore.innerText = "Score";
+    tr.appendChild(thPlayerName);
+    tr.appendChild(thPlayerScore);
     table.appendChild(tr);
-  });
-  document.getElementById("players").appendChild(table);
+    players.map((player) => {
+      const tr = document.createElement("tr");
+      const tdPlayerName = document.createElement("td");
+      const tdPlayerScore = document.createElement("td");
+      tdPlayerName.innerText = player.playersName;
+      tdPlayerScore.innerText = player.score;
+      tr.appendChild(tdPlayerName);
+      tr.appendChild(tdPlayerScore);
+      table.appendChild(tr);
+    });
+
+    document.getElementById("players").appendChild(table);
+  } else {
+    if (players.length) {
+      players.map((player) => {
+        const tr = document.createElement("tr");
+        const tdPlayerName = document.createElement("td");
+        const tdPlayerScore = document.createElement("td");
+        tdPlayerName.innerText = player.playersName;
+        tdPlayerScore.innerText = player.score;
+        tr.appendChild(tdPlayerName);
+        tr.appendChild(tdPlayerScore);
+        table.appendChild(tr);
+      });
+    } else {
+      document.getElementById();
+    }
+  }
 }
 
 function seeHistory() {
-  document.getElementById("addQuizResults").hidden = true;
-  document.getElementById("playersResults").hidden = false;
+  addQuizResultsView.hidden = true;
+  playersResultsView.hidden = false;
+  console.log(localStorage.getItem("players"));
   createTable(JSON.parse(localStorage.getItem("players")));
   document.getElementById("clearHistorial").addEventListener("click", () => {
-    players = [];
-    localStorage.setItem("players", JSON.stringify(players));
-    createTable(JSON.parse(localStorage.getItem("players")));
+    // players = [];
+    // localStorage.setItem("players", JSON.stringify(players));
+    // createTable(JSON.parse(localStorage.getItem("players")));
   });
   document.getElementById("back").addEventListener("click", () => {
     main();
   });
 }
+
 function addQuizResults() {
-  document.getElementById("quiz").hidden = true;
-  document.getElementById("addQuizResults").hidden = false;
-  document.getElementById(
-    "result"
-  ).textContent = `Your final score is: ${currentTime}`;
-  document.getElementById("time").textContent = `Time: ${currentTime} Seconds`;
+  const playersName = document.getElementById("player");
+  const result = document.getElementById("result");
+  const time = document.getElementById("time");
+
+  quizView.hidden = true;
+  addQuizResultsView.hidden = false;
+  result.textContent = `Your final score is: ${score}`;
+  time.textContent = `Time: ${score} Seconds`;
+
   document.getElementById("submitResult").addEventListener("click", () => {
-    players.push({
-      playersName: document.getElementById("player").value,
-      score: currentTime,
-    });
-    localStorage.setItem("players", JSON.stringify(players));
-    seeHistory();
+    if (playersName.value === "") {
+      alert("Please add a valid name!!");
+    } else {
+      players.push({
+        playersName: playersName.value,
+        score: score,
+      });
+      localStorage.setItem("players", JSON.stringify(players));
+      seeHistory();
+    }
   });
 }
 
-function iterateOverQuiz(quiz, quizQuestion, quizIndex, lastQuizIndex) {
+function removeButtonOptions() {
+  const buttonOptions = document.querySelectorAll(".btn-options");
+  buttonOptions.forEach((button) => {
+    button.remove();
+  });
+}
+
+function iterateOverQuiz(quizQuestion, quizIndex, lastQuizIndex) {
+  const titleQuestion = document.getElementById("titleQuestion");
+  const questions = document.getElementById("questions");
+  const optionsContainer = document.getElementById("options");
+  homeView.hidden = true;
+  quizView.hidden = false;
+
   // check if end of quiz
-  if (quizIndex === lastQuizIndex || !quizQuestion) {
-    removeTimerClock(clock);
-    addQuizResults();
+  if (!quizQuestion) {
+    stopTimer();
     return;
   }
+  removeButtonOptions();
 
-  const optionsContainer = document.getElementById("options");
-  document.getElementById("titleQuestion").textContent = `Question ${
-    quizIndex + 1
-  }`;
-  questions.innerHTML = quizQuestion.question;
+  titleQuestion.innerText = `Question ${quizIndex + 1}`;
+  questions.innerText = quizQuestion.question;
 
   // create button and store them into an array
-  const options = quizQuestion.options.map((option, _) => {
+  const options = quizQuestion.options.map((option) => {
     const buttonOptions = document.createElement("button");
     buttonOptions.classList.add("btn-options");
-
-    buttonOptions.innerHTML = option;
+    buttonOptions.innerText = option;
+    // append options created
+    optionsContainer.appendChild(buttonOptions);
 
     buttonOptions.addEventListener("click", (evt) => {
-      if (quizQuestion.answer === evt.target.innerHTML) {
-        message.innerHTML = "Correct!";
+      if (quizQuestion.answer === evt.target.innerText) {
+        message.innerText = "Correct!";
       } else {
-        message.innerHTML = "Incorrect answer!";
-        currentTime -= quizQuestion.penaltyTime;
-        removeTimerClock(clock);
-
-        clock = createTimerClock(currentTime);
+        message.innerText = "Incorrect answer!";
+        quizTime -= quizQuestion.penaltyTime;
       }
 
-      removeButtonOptions();
-      iterateOverQuiz(quiz, quiz[++quizIndex], quizIndex, lastQuizIndex);
+      iterateOverQuiz(quiz[++quizIndex], quizIndex);
     });
 
     return buttonOptions;
   });
+}
 
-  // append options created
-  options.forEach((option) => optionsContainer.appendChild(option));
+function stopTimer() {
+  score = quizTime;
+  quizTime = 70;
+  clearTimeout(timeOut);
+  timerStart = false;
+  addQuizResults();
+}
+
+function createTimerClock() {
+  const display = document.getElementById("time");
+
+  display.innerText = `Time: ${quizTime} Seconds`;
+
+  quizTime--;
+  timeOut = setTimeout(createTimerClock, 1000);
+
+  if (quizTime <= 0) stopTimer();
+}
+
+function clearWindows() {
+  homeView.hidden = false;
+  quizView.hidden = true;
+  playersResultsView.hidden = true;
+  addQuizResultsView.hidden = true;
+  document.getElementById("player").value = "";
+  document.getElementById("message").innerText = "";
 }
 
 function main() {
   const startQuiz = document.getElementById("startQuiz");
-  const homeDiv = document.getElementById("home");
-  homeDiv.hidden = false;
-  document.getElementById("addQuizResults").hidden = true;
-  document.getElementById("playersResults").hidden = true;
-
+  const display = document.getElementById("time");
+  const [firstQuestion] = quiz;
+  clearWindows();
+  display.innerText = `Time: ${quizTime} Seconds`;
   startQuiz.addEventListener("click", () => {
-    document.getElementById("quiz").hidden = false;
-    removeButtonOptions();
-    const quizTime = 75;
-    const initialIndex = 0;
-    const lastIndex = quiz.length;
-
-    homeDiv.hidden = true;
-
-    clock = createTimerClock(quizTime);
-
-    const [firstQuestion] = quiz;
-
-    iterateOverQuiz(quiz, firstQuestion, initialIndex, lastIndex);
+    if (!timerStart) {
+      timerStart = true;
+      createTimerClock();
+      iterateOverQuiz(firstQuestion, 0);
+    }
   });
 }
 
