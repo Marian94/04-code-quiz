@@ -70,6 +70,7 @@ function createTable(players) {
     table.appendChild(tr);
     players.map((player) => {
       const tr = document.createElement("tr");
+      tr.setAttribute("class", "tr-element");
       const tdPlayerName = document.createElement("td");
       const tdPlayerScore = document.createElement("td");
       tdPlayerName.innerText = player.playersName;
@@ -84,6 +85,7 @@ function createTable(players) {
     if (players.length) {
       players.map((player) => {
         const tr = document.createElement("tr");
+        tr.setAttribute("class", "tr-element");
         const tdPlayerName = document.createElement("td");
         const tdPlayerScore = document.createElement("td");
         tdPlayerName.innerText = player.playersName;
@@ -92,22 +94,27 @@ function createTable(players) {
         tr.appendChild(tdPlayerScore);
         table.appendChild(tr);
       });
-    } else {
-      document.getElementById();
     }
   }
 }
 
 function seeHistory() {
+  const localStoragePlayers = JSON.parse(localStorage.getItem("players"));
+
   addQuizResultsView.hidden = true;
   playersResultsView.hidden = false;
-  console.log(localStorage.getItem("players"));
-  createTable(JSON.parse(localStorage.getItem("players")));
+  console.log("localStorage", localStoragePlayers);
+  createTable(localStoragePlayers);
+
   document.getElementById("clearHistorial").addEventListener("click", () => {
-    // players = [];
-    // localStorage.setItem("players", JSON.stringify(players));
-    // createTable(JSON.parse(localStorage.getItem("players")));
+    const elements = document.getElementsByClassName("tr-element");
+    players = [];
+    localStorage.setItem("players", []);
+    while (elements.length) {
+      elements[0].remove();
+    }
   });
+
   document.getElementById("back").addEventListener("click", () => {
     main();
   });
